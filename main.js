@@ -1,60 +1,71 @@
 const caixaPerguntas = document.querySelector(".caixa-perguntas");
 const caixaAlternativas = document.querySelector(".caixa-alternativas");
 const textoResultado = document.querySelector(".texto-resultado");
+const reiniciarBtn = document.getElementById("reiniciar");
 
 const perguntas = [
     {
-        enunciado: "Onde você vai chutar?",
+        enunciado: "Você foi classificado na Copa do Mundo e agora tens que cobrar um pênalti. Em que lado você vai chutar?",
         alternativas: [
-            { texto: "Área 1", local: "Área 1" },
-            { texto: "Área 2", local: "Área 2" }
+            { texto: "Esquerda", local: "Esquerda" },
+            { texto: "Centro", local: "Centro" },
+            { texto: "Direita", local: "Direita" }
         ]
     },
     {
-        enunciado: "Qual é a sua estratégia de chute?",
+        enunciado: "Você terá que marcar outro pênalti! Em que lado você chuta?",
         alternativas: [
-            { texto: "Chutar forte", local: "Área 1" },
-            { texto: "Chutar com precisão", local: "Área 2" }
+            { texto: "Esquerda", local: "Esquerda" },
+            { texto: "Centro", local: "Centro" },
+            { texto: "Direita", local: "Direita" }
         ]
     },
     {
-        enunciado: "Você se tornou goleiro! Qual área você vai defender?",
+        enunciado: "Você agora é o goleiro! Qual lado você vai defender?",
         alternativas: [
-            { texto: "Área 1", local: "Área 1" },
-            { texto: "Área 2", local: "Área 2" }
+            { texto: "Esquerda", local: "Esquerda" },
+            { texto: "Centro", local: "Centro" },
+            { texto: "Direita", local: "Direita" }
         ]
     },
     {
-        enunciado: "Você é o zagueiro! Qual opção você escolhe para bloquear o chute?",
+        enunciado: "Última chance como goleiro! Qual lado você vai defender?",
         alternativas: [
-            { texto: "Blocar Área 1", local: "Área 1" },
-            { texto: "Blocar Área 2", local: "Área 2" }
+            { texto: "Esquerda", local: "Esquerda" },
+            { texto: "Centro", local: "Centro" },
+            { texto: "Direita", local: "Direita" }
         ]
     },
     {
-        enunciado: "Última chance como zagueiro! Qual área você vai cobrir?",
+        enunciado: "Você agora é o zagueiro do Brasil! Qual área você vai bloquear?",
         alternativas: [
-            { texto: "Área 1", local: "Área 1" },
-            { texto: "Área 2", local: "Área 2" }
+            { texto: "Esquerda", local: "Esquerda" },
+            { texto: "Centro", local: "Centro" },
+            { texto: "Direita", local: "Direita" }
         ]
-    }
+    },
+    {
+        enunciado: "O jogo acabou. Clique para ver os resultados.",
+        alternativas: [
+            { texto: "Ver resultados"}
+        ]
+    }    
 ];
 
-// Arrays de mensagens
 const mensagensErro = [
-    "Você errou! Tente novamente.",
-    "Não foi dessa vez. Escolha outra opção.",
-    "Chute falhou. Melhore sua mira!",
-    "Infelizmente, você errou o chute.",
-    "Que pena, o chute não foi bem-sucedido."
+    "Você errou! Quase acertou um torcedor. Que vergonha.",
+    "Você acertou na trave! Minha vó joga melhor!",
+    "Seu chute falhou. Nem chegou perto do gol!",
+    "Acertou o passarinho, mas não o gol.",
+    "Mirou no gol inimigo e acertou um gol contra... Como pode?"
 ];
 
 const mensagensGolBonito = [
-    "Gol bonito! Que estilo!",
-    "Incrível! Um gol muito bonito!",
-    "Sensacional! Você fez um gol incrível!",
-    "Maravilhoso! Um gol espetacular!",
-    "Fantástico! Um gol digno de destaque!"
+    "É a besta enjaulada! Esse é professor do Messi",
+    "Golaço do campeão! Ele é imbatível!",
+    "Você acertou um gol lindo! Esse vai ficar na história.",
+    "Até o Pelé se impressionaria!",
+    "Gol incrível! Esse vai pros stories."
 ];
 
 const mensagensGol = [
@@ -78,7 +89,18 @@ const mensagensZagueiro = [
     "Ótimo posicionamento! A bola não passou!",
     "Você defendeu bem, evitando o gol!",
     "Excelente trabalho! O chute foi bloqueado!",
-    "Ótima atuação! Você evitou o gol!"
+    "Ótima defesa! Você evitou o gol!"
+];
+
+const mensagensErroDefesa = [
+    "A trave já parou mais gols do que você!",
+    "Você piscou e a bola entrou! Tá dormindo?",
+    "Tá assistindo o jogo? Até meu sobrinho defende essa!",
+    "Essa até o cego viu!",
+    "Pior que você só o Gustavo!",
+    "O Gasparzinho defende melhor!",
+    "Você estava tão fora de posição que o gol virou um alvo móvel.",
+    "Essa defesa foi mentirosa, mas só porque mentir é feio."
 ];
 
 let atual = 0;
@@ -95,19 +117,23 @@ function mostraPergunta() {
 
     perguntaAtual = perguntas[atual];
     caixaPerguntas.textContent = perguntaAtual.enunciado;
-    caixaAlternativas.innerHTML = ""; // Limpa as alternativas anteriores
+    caixaAlternativas.innerHTML = ""; 
 
     for (const alternativa of perguntaAtual.alternativas) {
         const botaoAlternativas = document.createElement("button");
         botaoAlternativas.textContent = alternativa.texto;
         botaoAlternativas.addEventListener("click", () => {
-            if (atual === 2) {
+            if (atual === 2 || atual === 3) {
                 defender(alternativa.local);
-            } else if (atual >= 3) {
+            } else if (atual === 4) {
                 zagueiro(alternativa.local);
-            } else {
+            } else if (atual < 2) {
                 chute(alternativa.local);
+            } else if (atual === 5) {
+                exibeResultadoFinal();
             }
+            atual++;
+            mostraPergunta();
         });
         caixaAlternativas.appendChild(botaoAlternativas);
     }
@@ -119,19 +145,19 @@ function chute(area) {
 
     if (rand > 80) {
         resultado = getRandomMessage(mensagensGolBonito);
+        textoResultado.className = "texto-resultado acerto";
         golsBonitos++;
+        gols++;  
     } else if (rand > 50) {
         resultado = getRandomMessage(mensagensGol);
+        textoResultado.className = "texto-resultado acerto";
         gols++;
     } else {
         resultado = getRandomMessage(mensagensErro);
+        textoResultado.className = "texto-resultado erro";
     }
 
     textoResultado.textContent = resultado;
-    setTimeout(() => {
-        atual++;
-        mostraPergunta();
-    }, 2000); // Exibe a mensagem por 2 segundos antes de mostrar a próxima pergunta
 }
 
 function defender(area) {
@@ -140,16 +166,14 @@ function defender(area) {
 
     if (rand > 50) {
         resultado = getRandomMessage(mensagensGoleiro);
+        textoResultado.className = "texto-resultado acerto";
         defesas++;
     } else {
-        resultado = `A bola entrou na ${area}.`;
+        resultado = getRandomMessage(mensagensErroDefesa);
+        textoResultado.className = "texto-resultado erro";
     }
 
     textoResultado.textContent = resultado;
-    setTimeout(() => {
-        atual++;
-        mostraPergunta();
-    }, 2000); // Exibe a mensagem por 2 segundos antes de mostrar a próxima pergunta
 }
 
 function zagueiro(area) {
@@ -158,15 +182,14 @@ function zagueiro(area) {
 
     if (rand > 50) {
         resultado = getRandomMessage(mensagensZagueiro);
+        textoResultado.className = "texto-resultado acerto";
+        defesas++; 
     } else {
-        resultado = `O chute passou pela ${area}.`;
+        resultado = getRandomMessage(mensagensErroDefesa);
+        textoResultado.className = "texto-resultado erro";
     }
 
     textoResultado.textContent = resultado;
-    setTimeout(() => {
-        atual++;
-        mostraPergunta();
-    }, 2000); // Exibe a mensagem por 2 segundos antes de mostrar a próxima pergunta
 }
 
 function getRandomMessage(mensagens) {
@@ -176,9 +199,66 @@ function getRandomMessage(mensagens) {
 
 function exibeResultadoFinal() {
     caixaPerguntas.textContent = "Resultado Final:";
-    caixaAlternativas.innerHTML = ""; // Limpa as alternativas anteriores
-    textoResultado.textContent = `Gols: ${gols}, Gols Bonitos: ${golsBonitos}, Defesas: ${defesas}`;
+    caixaAlternativas.innerHTML = ""; 
+
+    let resultadoFinal = "";
+    let resultadoClass = "";
+
+    if (gols === 2 && defesas === 3) {
+        resultadoFinal = "É a lenda do futebol! Imbatível! Você acertou todas e defendeu todas!";
+        resultadoClass = "dourado";
+    } else if (gols === 2 && defesas === 2) {
+        resultadoFinal = "Eles te chamam de Neymar! Você acertou todas e defendeu 2!";
+        resultadoClass = "verde";
+    } else if (gols === 2 && defesas === 1) {
+        resultadoFinal = "Jogou bem, mas poderia ser melhor. Você acertou 2 e defendeu 1.";
+        resultadoClass = "verde";
+    } else if (gols === 2 && defesas === 0) {
+        resultadoFinal = "Você me lembra de um tal de André. Você acertou 2 e não defendeu nenhuma.";
+        resultadoClass = "vermelho";
+    } else if (gols === 1 && defesas === 3) {
+        resultadoFinal = "Esse é dos bons! Você acertou 1 e defendeu todas.";
+        resultadoClass = "verde";
+    } else if (gols === 1 && defesas === 2) {
+        resultadoFinal = "Nada mal, já pode jogar no Vasco. Você acertou 1 e defendeu 2 vezes.";
+        resultadoClass = "verde";
+    } else if (gols === 1 && defesas === 1) {
+        resultadoFinal = "Já vi criança jogar melhor. Você acertou 1 e defendeu 1 vez.";
+        resultadoClass = "vermelho";
+    } else if (gols === 1 && defesas === 0) {
+        resultadoFinal = "Um cadeirante joga melhor. Você acertou 1 e não defendeu nenhuma.";
+        resultadoClass = "vermelho";
+    } else if (gols === 0 && defesas === 3) {
+        resultadoFinal = "Sorte ou talento? Você não acertou nenhuma, mas defendeu todas.";
+        resultadoClass = "verde";
+    } else if (gols === 0 && defesas === 2) {
+        resultadoFinal = "Já pensou em ser goleiro? Você não marcou nenhuma, mas defendeu 2.";
+        resultadoClass = "vermelho";
+    } else if (gols === 0 && defesas === 1) {
+        resultadoFinal = "Ruim é elogio! Você não fez nenhum gol, e defendeu só 1 vez.";
+        resultadoClass = "vermelho";
+    } else if (gols === 0 && defesas === 0) {
+        resultadoFinal = "Pode aposentar. Futebol não é o jogo pra você. Você não fez um gol nem uma defesa.";
+        resultadoClass = "carmesim";
+    }
+
+    textoResultado.textContent = resultadoFinal;
+    textoResultado.className = `texto-resultado ${resultadoClass}`;
+
+    reiniciarBtn.style.display = "block";
+
 }
 
-// Inicializa o jogo
+function reiniciarJogo() {
+    atual = 0;
+    gols = 0;
+    golsBonitos = 0;
+    defesas = 0;
+    reiniciarBtn.style.display = "none";
+    textoResultado.textContent = ""
+    mostraPergunta();
+}
+
+reiniciarBtn.addEventListener("click", reiniciarJogo);
+
 mostraPergunta();
